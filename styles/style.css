@@ -1,0 +1,1244 @@
+/* 
+filename: style
+author: Chong Yi Yang
+created: 18/8/2024
+last modified: 25/8/2024
+description: css file for assignment 1
+*/
+
+/* Define font family and reset margin and padding */
+* {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+h1 {
+    font-size: 3em;
+}
+h2 {
+    font-size: 2em;
+}
+h3 {
+    font-size: 1.5em;
+}
+
+h4 {
+    font-size: 1.3em;
+}
+p {
+    font-size: 1.2em;
+    margin: 16px 0;
+}
+
+
+#logo {
+    /* Set logo image size */
+    max-width: 200px;
+    height: auto;
+}
+
+header .shown-menu {
+    background-color: white;
+    border-bottom: 2px solid rgba(180, 180, 180, 0.5);
+    padding: 20px 40px;
+    display: flex;
+}
+
+.navbar {
+    /* Remove bullet points */
+    list-style: none;
+    /* Set unordered list to be a flex box */
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    /* Set height to fill header */
+    height: 100%;
+}
+
+.links {
+    font-size: 1.2em;
+    color: black;
+    text-decoration: none;
+    padding: 10px 15px;
+    transition: background-color 0.2s;
+}
+
+
+.links:hover {
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+
+.hidden-menu .dropdown {
+    list-style: none;
+}
+
+.hidden-links {
+    text-decoration: none;
+    color: black;
+    display: block;
+    font-size: 1.2em;
+    padding: 1em;
+    border-bottom: 1px solid rgba(180, 180, 180, 0.5);
+}
+
+.hidden-menu {
+    display: none;
+}
+
+
+
+/* Hero section */
+.hero-home, .about-hero, .product-hero {
+    /* Make position relative so that the before element can be positioned relative to this */
+    position: relative;
+    text-align: center;
+    padding: 100px 0px;
+    margin: 0 auto; 
+}
+
+.hero-home::before, .about-hero::before, .product-hero::before {
+    content: "";
+    /* Position using the top and left properties and relative to the hero section */
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* Set width and height based on the hero section */
+    width: 100%;
+    height: 100%;
+
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position-y: 50%;
+    background-position-x: 50%;
+    /* Darken the background image to make text visible */
+    filter: brightness(0.5);
+
+    /* Move background behind the hero text */
+    z-index: -1;
+}
+
+.hero-home::before {
+    /* Define background image */
+    background-image: url("images/hero_home_background.jpg");
+
+}
+
+.hero-content h1 {
+    color: white;
+}
+
+.hero-content p {
+    font-size: 1.5em;
+    color: rgb(221, 221, 221);
+}
+
+#shopbtn {
+    display: inline-block;
+    cursor: pointer;
+    font-size: 1.1em;
+    padding: 0.8em 2.5em;
+    text-decoration: none;
+    border: 0;
+    border-radius: 2rem;
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+    transition: transform 0.3s;
+}
+
+/* Add a transform scale to enlarge the button when hovered */
+#shopbtn:hover {
+    transform: scale(1.05);
+}
+
+/* Features section */
+.features {
+    padding: 20px 50px;
+    /* Align text to center */
+    text-align: center;
+}
+
+.features h2 {
+    margin: 24px 0 0 0;
+}
+
+
+.feature-container {
+    /* Make feature container a flexbox */
+    display: flex;
+    /* Set all content to center */
+    justify-content: center;
+    /* Set gaps between each content */
+    gap: 24px;
+    /* Allow content to wrap when unable to fit */
+    flex-wrap: wrap;
+}
+
+.feature-card {
+    /* Set card max width */
+    max-width: 300px;
+    border: 1px solid rgb(163, 163, 163);
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 4px grey;
+    /* Animation when scaling on hover */
+    transition: transform 0.3s;
+}
+
+.feature-card:hover {
+    transform: scale(1.03);
+}
+
+/* Direct child p of feature class */
+.features > p {
+    margin-bottom: 30px;
+}
+
+/* Explore section */
+.explore {
+    /* Set explore section to be a flexbox */
+    display: flex;
+    justify-content: center;
+    padding: 50px 20px;
+    gap: 25px;
+    background-color: rgb(243, 243, 243);
+    margin: 25px 100px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.explore-content {
+    max-width: 50%;
+}
+
+.explore-image img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Enquiry section */
+.enquiry {
+    padding: 2em;
+    background-color: rgb(240, 240, 231);
+    text-align: center;
+}
+
+#rightarr {
+    width: 24px;
+    height: auto;
+}
+
+
+#enqbtn,
+#pay-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: black;
+    gap: 0.7em;
+    padding: 0 1em;
+    border: 1px solid black;
+    border-radius: 10px;
+    transition: color 0.3s, background-color 0.3s, fill 0.3s;
+}
+
+#enqbtn:hover {
+    color: white;
+    background-color: black;
+    fill: white;
+}
+
+/* Footer section */
+footer {
+    text-align: center;
+    background-color: black;
+    padding: 30px;
+    clear: both;
+}
+
+footer p {
+    font-size: 1em;
+    color: white;
+}
+
+footer span {
+    display: inline-block;
+    margin-top: 5px;
+}
+
+/* Enquire hero section */
+.hero-enquire, .enhancement-hero {
+    background-color: black;
+    text-align: center;
+    padding: 50px;
+}
+
+/* Enquire FAQ section */
+.faq {
+    padding: 50px;
+    margin: 0px 100px;
+}
+
+.faq h2 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.faq p {
+    padding-left: 15px;
+    margin-bottom: 30px;
+}
+
+.faq-question {
+    background-color: rgb(241, 241, 241);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: left;
+}
+
+.inline-link {
+    text-decoration: underline;
+    color: black;
+}
+
+/* Enquiry form section */
+.enquire-form {
+    margin: 100px;
+    padding: 25px 50px;
+    /* Set outline for the enquiry form */
+    border: 1px solid grey;
+    box-shadow: 0 2px 4px grey;
+    border-radius: 12px;
+    background-color: #f9f9f9;
+
+    box-sizing: border-box;
+}
+
+.enquire-form h2, .enquire-form p {
+    /* Align title and set margin */
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: 0px;
+}
+
+fieldset {
+    /* Remove border from fieldset */
+    border: 0;
+}
+
+/* Fieldset legend that act as blocks */
+.block-legend {
+    font-size: 1.3em;
+    font-weight: bold;
+    padding: 8px 0;
+}
+
+/* Combining 2 fields in 1 row */
+.combine-row {
+    /* Set to flexbox and allow wrap */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.form-split {
+    /* Fields that are splitted set the min-width to evenly distribute field spacing*/
+    min-width: 50%;
+    flex: 0 0 50%;
+    padding-right: 5px;
+}
+
+.enquire-form label {
+    /* Set label to inline block which acts as a block element but inline */
+    display: inline-block;
+    font-size: 1.2em;
+}
+
+/* Decorate input fields for text, email, select and textarea */
+input[type="text"],
+.enquire-form input[type="email"],
+.enquire-form select,
+.enquire-form textarea {
+    /* Set width to take full space of the form */
+    width: 100%;
+    padding: 8px;
+    margin: 8px 0px;
+    /* Change to rounded border */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    /* Allow animation when focus */
+    transition: border-color 0.4s;
+}
+
+.has-error-span {
+    margin-bottom: 0px !important;
+}
+
+.error-msg {
+    display: block;
+    font-size: 0.8em;
+    color: red;
+}
+
+.enquire-form textarea {
+    /* Allow textarea to be resized vertical only */
+    resize: vertical;
+}
+
+/* When input is on focus change border color and disable outline */
+input[type="text"]:focus,
+.enquire-form input[type="email"]:focus,
+.enquire-form select:focus,
+.enquire-form textarea:focus {
+    border-color: rgb(0, 132, 255);
+    outline: none;
+}
+
+.inline-legend {
+    float: left;
+    padding-right: 12px;
+}
+
+.inline-beside-legend {
+    /* Ensure the content stays in one column */
+    overflow: hidden; 
+}
+
+.combine-rad {
+    padding-bottom: 10px;
+}
+
+/* Change design of the submit and reset button */
+.form-act input[type="submit"],
+.form-act input[type="reset"],
+.form-act #cancelBtn {
+    padding: 10px 20px;
+    font-size: 0.9em;
+    margin: 6px 12px;
+    cursor: pointer;
+    border-radius: 8px;
+    /* Allow animation when hovering */
+    transition: background-color 0.3s, color 0.3s, border 0.3s;
+}
+
+
+/* Submit and reset button aligning center */
+.form-act {
+    text-align: center;
+    margin: 12px 0;
+
+}
+
+.enquire-form input[type="submit"] {
+    background-color: black;
+    color: white;
+    border: 1px solid black;
+    
+}
+
+.enquire-form input[type="reset"] {
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+}
+
+
+.enquire-form input[type="submit"]:hover,
+.enquire-form input[type="reset"]:hover {
+    background-color: rgb(243, 169, 31);
+    color: black;
+    border-color: black;
+}
+
+
+.product-item {
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+.prod-head-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.delete-prod {
+    cursor: pointer;
+    border: 1px solid rgb(255, 45, 45);
+    border-radius: 6px;
+    background-color: rgb(255, 45, 45);
+    fill: white;
+    padding: 2px;
+    transition: fill 0.2s;
+}
+
+svg {
+    vertical-align: middle;
+}
+
+.delete-prod:hover {
+    fill: black
+}
+
+.prod-option-header {
+    display: block !important; 
+    margin-bottom: 0.2em;
+}
+
+.option-btn {
+    width: 75px;
+    height: 50px;
+    cursor: pointer;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 0.3em;
+    color: black;
+    margin-bottom: 5px;
+}
+
+.option-btn.active {
+    background-color: black;
+    color: white;
+}
+
+.qty-input {
+    width: 3em !important;
+    text-align: center;
+}
+
+.qty-btn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.product-footer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.price-container {
+    padding-right: 3em;
+}
+
+.price-container h4 {
+    padding-bottom: 0.7em;
+}
+
+.price-container p {
+    text-align: left;
+}
+
+.final-price-container {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+}
+
+#new-product {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #19cb63;
+    border: 1px solid black;
+    border-radius: 1em;
+    gap: 0.5em;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, fill 0.3s, border 0.3s;
+}
+
+#new-product:hover {
+    background-color: black;
+    color: #19cb63;
+    fill: #19cb63;
+    border: 1px solid #19cb63;
+}
+
+#new-product span {
+    font-size: 1.1em;
+}
+
+/* Toast */
+.toast {
+    max-width: 400px;
+    min-width: 200px;
+    /* Move toast container 50% to left */
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.9); 
+    border: 1px solid grey;
+    color: red;
+    border-radius: 0.3em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8em;
+    font-size: 0.9em;
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+.toast.show {
+    visibility: visible;
+    opacity: 1; 
+}
+
+.toast.hide {
+    visibility: hidden;
+    opacity: 0;
+}
+
+
+#close {
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding-left: 5px;
+}
+
+/* About me hero */
+.about-hero {
+    /* Add padding left and right */
+    padding-left: 150px;
+    padding-right: 150px;
+}
+
+
+.about-hero::before {
+    background-image: url("images/hero_about_background.jpg");
+}
+
+/* About me section */
+.my-details {
+    margin: 50px;
+    padding: 50px;
+    background-color: #f0ececb9;
+    border-radius: 8px;
+    border: 1px solid black;
+    box-shadow: 0 4px 6px grey;
+}
+
+.my-details::after {
+    /* Add an after pseudo class to ensure figure stays inside the section */
+    content: "";
+    display: block;
+    /* Clears the figure float */
+    clear: both;
+}
+
+/* Make figure float right */
+.my-details figure{
+    float: right;
+}
+
+.my-details figure img {
+    /* Add double border */
+    border: 5px double rgb(219, 219, 219);
+    padding: 20px;
+    width: 200px;
+    height: auto;
+}
+
+.my-details figcaption {
+    font-size: 1.1em;
+    text-align: center;
+}
+
+.my-details h2 {
+    margin-bottom: 12px;
+}
+
+.my-details dt {
+    /* Make dt float left so that dd flows right */
+    float: left;
+    font-weight: bold;
+    margin-bottom: 10px;
+    margin-right: 8px;
+    /* Fixed width for all dt */
+    width: 30%;
+}
+
+/* Add ':' after each dt */
+.my-details dt::after {
+    content: ":"; 
+}
+
+.my-details dd {
+    margin-bottom: 10px;
+}
+
+/* Timetable section */
+.timetable {
+    margin: 0 30px 30px 30px;
+    padding: 20px;
+    
+}
+
+.timetable h2 {
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.timetable table {
+    /* Make cells have 1 border instead of 2 */
+    border-collapse: collapse;
+    /* Fill section to center */
+    width: 100%;
+}
+
+.timetable td, th {
+    /* Set relative height to cells */
+    height: 3em;
+    border: 1px solid rgb(185, 185, 185);
+    padding: 10px;
+}
+
+/* Set background colors */
+.timetable td {
+    background-color: #f8f8f8;
+}
+
+.timetable th {
+    background-color: #e9e9e9;
+}
+
+/* Class event */
+.event {
+    /* Make it a flex box */
+    display: flex;
+    /* Stack vertically */
+    flex-direction: column;
+    /* Align center vertically */
+    justify-content: center;
+    /* Fill whole slot */
+    min-height: 100%;
+    padding: 0px 10px;
+    border: 1px solid rgb(145, 145, 145);
+    border-radius: 4px;
+    background-color: rgba(255, 204, 62, 0.39);
+    /* Have animations on hovering */
+    transition: background-color 0.3s;
+}
+
+.event:hover {
+    /* Change bg color on hover */
+    background-color: rgba(255, 204, 62);
+}
+
+.event p{
+    margin: 3px 0;
+    font-size: 0.8em;
+}
+
+/* Product page */
+.product-hero::before {
+    background-image: url(images/product_hero.png);
+    background-position-y: 70%;
+}
+
+/* Copyright text on hero section */
+.product-hero .copyright-content {
+    font-size: 0.7em;
+    position: absolute;
+
+    /* Position bottom left of the hero section */
+    bottom: 0;
+    left: 0;
+    padding-left: 16px;
+}
+
+.product-hero .copyright-content a {
+    text-decoration: underline;
+    color: white;
+}
+
+.product-hero h1 {
+    /* 
+    Font variant: small caps
+    Font weight: Bold
+    Font size: 2.5em
+    Line Height: 1.2x
+    Font family: Arial, sans-serif
+    */
+    font: small-caps bold 2.5em/1.2 'Arial', sans-serif;
+}
+
+.side-nav {
+    /* Aside navigation bar float right */
+    float: right;
+    /* Width of 25% */
+    width: 25%;
+    background: #ffffff;
+    padding: 2rem;
+    /* Colored border */
+    border: 1px solid beige;
+    margin: 1rem;
+    box-shadow: 0 0 5px rgba(224, 119, 20, 0.623);
+
+    /* Make nav bar sticky so it follows scroll */
+    position: sticky;
+
+    /* Position 10% from the top and most right */
+    right: 0;
+    top: 10%;
+}
+
+.side-nav h3 {
+    box-sizing: border-box;
+    padding: 6px 0;
+}
+
+.side-nav ul li {
+    padding-left: 1.5rem;
+    list-style: circle;
+    /* Set position of list style to not pop out */
+    list-style-position: inside;
+}
+
+.side-nav li {
+    padding: 5px 0;
+    list-style:lower-roman;
+    list-style-position: inside;
+}
+
+.side-nav a {
+    text-decoration: none;
+    color: black;
+}
+
+.product-section {
+    margin: 2rem;
+    /* Product section takes rest of the width */
+    width: 68%;
+    padding: 1.5rem;
+    background-color: rgba(223, 221, 212, 0.274);
+}
+
+.product-section p {
+    text-align: justify;
+}
+
+.product-section li {
+    list-style-position: inside;
+    margin-bottom: 8px;
+}
+
+.product-section h4 {
+    margin-bottom: 8px;
+}
+
+.product-section img {
+    max-width: 100%;
+    max-height: 100%;
+    padding: 0 20px 20px;
+}
+
+.product-section::after {
+    /* Make floating img contain inside the product section */
+    content: "";
+    display: block;
+    clear: both;
+}
+
+/* Float img direction based on class */
+.right-float-img {
+    float: right;
+}
+.left-float-img {
+    float: left;
+}
+
+.enhancement-article {
+    margin: 2em;
+    padding: 1.5em;
+}
+
+.enhancement-article h4 {
+    margin-top: 16px;
+}
+
+.enhancement-article p, .enhancement-article h4, .enhancement-article ul, .enhancement-article h2{
+    padding-left: 15px;
+}
+
+.enhancement-article li {
+    list-style-position: inside;
+    margin-bottom: 6px;
+}
+
+.enhancement-article h2 {
+    margin-bottom: 8px;
+
+}
+
+
+#payment-heading {
+    text-align: center;
+    margin-top: 0.3em;
+}
+
+/* Customer info section in payment page */
+#customer-info-container {
+    background-color: white;
+    padding: 2em;
+    max-width: 50%;
+    margin: 2em;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border-radius: 1.5em;
+}
+
+#customer-info-container h2 {
+    color: #333333;
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.info-group {
+    margin-bottom: 20px;
+}
+
+.info-group h4 {
+    color: #666666;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.info-group p {
+    font-size: 16px;
+    color: #444444;
+    margin: 5px 0;
+}
+
+.info-group p strong {
+    color: #333333;
+}
+
+.info-group span {
+    color: #777777;
+}
+
+/* Product item */
+.product-item {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    transition: box-shadow 0.3s;
+}
+
+/* On hover effect on product item */
+.product-item:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.product-details h5 {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.product-data {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.product-price {
+    margin-top: 10px;
+    text-align: right;
+}
+
+.product-price span {
+    font-weight: bold;
+    color: black;
+    font-size: 1.1em;
+}
+
+/* Payment form container floating right */
+#payment-form-container {
+    float: right;
+    width: 35%;
+    background-color: white;
+    padding: 1.5em;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+    margin-right: 1.5em;
+    margin-bottom: 1.5em;
+}
+
+#payment-form-container h3 {
+    margin: 0.5em 0;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+#payment-form label {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.form-act input[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    border: 1px solid #007bff;
+}
+
+#cancelBtn {
+    background-color: #ff3f1e;
+    color: white;
+    border: 1px solid #ff3f1e;
+}
+
+.form-act input[type="submit"]:hover {
+    color: #007bff;
+    background-color: white;
+}
+
+#cancelBtn:hover {
+    background-color: white;
+    color: #ff3f1e;
+}
+
+#card-type-options {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+    align-items: center;
+}
+
+#card-type-options input[type="radio"],
+#card-type-options label {
+    cursor: pointer;
+}
+
+
+#timer-banner {
+    background-color: #007bff; /* Blue background */
+    color: white; /* White text */
+    font-weight: bold;
+    text-align: center;
+    padding: 0.5em;
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+
+.timer-text {
+    font-size: 18px;
+}
+
+#pay-btn {
+    font-size: 0.85em;
+    background-color: white;
+    margin-left: 1em;
+}
+
+#pay-btn:hover {
+    background-color: black;
+    color: white;
+    fill: white;
+}
+
+@media (max-width: 1000px) {
+    /* Show the hidden nav bar when width changes */
+    .hidden-menu {
+        display: block;
+    }
+
+    /* Remove the existing nav links */
+    .links {
+        display: none;
+    }
+
+    /* Center the logo */
+    nav{
+        margin: 0 auto;
+    }
+
+    /* Remove gap from the nav bar */
+    .navbar {
+        gap: 0;
+    }
+
+    #logo {
+        width: 100%;
+        height: auto;
+    }
+}
+
+/* Change the product range page */
+@media (max-width: 950px) {
+    /* Remove float on aside bar */
+    .side-nav {
+        float: none;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        top: 0;
+    }
+
+    /* Hide Navigation title on aside bar */
+    .side-nav h3 {
+        display: none;
+    }
+
+    .side-nav ol {
+        /* Make the navigation items flex horizontally */
+        display: flex;
+        justify-content: space-around;
+
+    }
+
+    .side-nav ol li {
+        /* Remove list style */
+        list-style: none;
+        display: block;
+        text-align: center;
+        padding: 1em;
+    }
+
+    /* Remove subsection */
+    .side-nav ul {
+        display: none;
+    }
+
+    .product-section {
+        /* Increase product section width */
+        width: auto;
+    }
+
+    #payment-form-container {
+        float: none;
+        width: auto;
+        margin: 1.5em;
+    }
+
+    #customer-info-container {
+        max-width: 100%;
+    }
+}
+
+
+/* Media for different widths */
+@media (max-width: 768px) {
+    /* Change heading and paragraph sizes */
+    h1 {
+        font-size: 2em;
+    }
+    h2 {
+        font-size: 1.5em;
+    }
+    h3 {
+        font-size: 1.2em;
+    }
+    .hero-content p {
+        font-size: 1em;
+        margin: 16px 0;
+    }
+    
+    .explore {
+        /* Change flex direction to vertical */
+        flex-direction: column;
+        margin: 0;
+        padding: 30px 10px;
+    }
+
+    .explore-content {
+        /* Increase to full width for smaller screens */
+        max-width: 100%;
+        text-align: center;
+    }
+
+    /* Remove margin from FAQ and form section */
+    .faq, .enquire-form {
+        margin: 0;
+    }
+    
+    /* Change from display flex to block to break the row */
+    .combine-row {
+        display: block;
+    }
+
+    .enquire-form {
+        border-radius: 0;
+        border: 0;
+        border-top: 1px solid black;
+    }
+
+    /* Changes to about section */
+    .about-hero {
+        /* Decrease padding */
+        padding: 100px 50px;
+    }
+
+    .my-details {
+        /* Decrease margin and padding */
+        margin: 1em;
+        padding: 1.2em;
+    }
+
+    /* Remove figure float and align center */
+    .my-details figure {
+        float: none;
+        text-align: center;
+        margin-bottom: 1em;
+    }
+
+    /* dt take more width */
+    .my-details dt {
+        width: 50%;
+        font-size: 0.9em;
+    }
+
+    .my-details dd {
+        font-size: 0.8em;
+    }
+
+    /* Remove margin and padding on timetable section */ 
+    .timetable {
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Make timetable smaller in size by changing padding and font size */
+    .timetable th, .timetable td {
+        padding: 5px;
+    }
+
+    .timetable th {
+        font-size: 0.5em;
+    }
+
+    .timetable .event {
+        font-size: 0.6em;
+        padding: 0;
+        text-align: center;
+    }
+
+    .enhancement-article {
+        margin: 1em;
+        padding: 0.5em;
+    }
+
+    #payment-form-container {
+        margin: 0;
+        margin-top: 1.5em;
+    }
+
+    #customer-info-container {
+        margin: 1.5em 0;
+        border-radius: 0;
+
+    }
+}
