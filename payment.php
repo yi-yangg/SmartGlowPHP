@@ -1,3 +1,106 @@
+<?php
+session_start();
+
+require("utilities.php");
+function storeInputInSession()
+{
+
+}
+
+
+
+function validateString($str, $regex, $length, $allowedChars)
+{
+    if (empty($str)) {
+        return "Field is required.";
+    } else if (strlen($str) > $length) {
+        return "Input must be a maximum of $length characters.";
+    } else if (!preg_match($regex, $str)) {
+        return "Input must only contain: " . implode(", ", $allowedChars) . ".";
+    } else {
+        return "";
+    }
+}
+
+function validateEmail($email)
+{
+    if (empty($email)) {
+        return "Email is required.";
+    } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return "Invalid email format.";
+    } else {
+        return "";
+    }
+}
+
+function validateDigits($str, $length, $field)
+{
+    if (empty($str)) {
+        return "$field cannot be empty.";
+    } else if (!preg_match("/^\d{" . $length . "}$/", $str)) {
+        return "$field must be exactly $length digits.";
+    } else {
+        return "";
+    }
+}
+
+function validateRadio($fieldName)
+{
+    if (!isset($_POST[$fieldName])) {
+        return "At least 1 option must be selected";
+    }
+    return "";
+
+}
+
+function validatePostAndState($post, $state)
+{
+
+}
+
+function validateInput()
+{
+    $firstName = sanitise_input($_POST["first-name"]);
+    $lastName = sanitise_input($_POST["last-name"]);
+    // Validate first and last name
+    $firstNameErrMsg = validateString($firstName, "/^[a-zA-Z ]+$/", 25, ["Alphabets", "Spaces"]);
+    $lastNameErrMsg = validateString($lastName, "/^[a-zA-Z ]+$/", 25, ["Alphabets", "Spaces"]);
+
+    // Validate email address
+    $email = sanitise_input($_POST["email"]);
+    $emailErrMsg = validateEmail($email);
+
+    // Validate phone number
+    $phoneNo = sanitise_input($_POST["phone-no"]);
+    $phoneErrMsg = validateDigits($phoneNo, 10, "Phone number");
+
+    // Validate if contact method is selected
+    $contactMethErrMsg = validateRadio("contact-method");
+
+    // Validate shipping address
+    $shipStreet = sanitise_input($_POST["ship-street-add"]);
+    $shipStreetErrMsg = validateString($shipStreet, "/^[a-zA-Z0-9 ]+$/", 40, ["Alphabets", "Numbers", "Spaces"]);
+
+    $shipSuburb = sanitise_input($_POST["ship-street-suburb"]);
+    $shipSuburbErrMsg = validateString($shipSuburb, "/^[a-zA-Z0-9 ]+$/", 40, ["Alphabets", "Numbers", "Spaces"]);
+
+    // Check state and postcode combination
+
+
+    // Validate billing address
+}
+
+if (isset($_POST["first-name"])) {
+    validateInput();
+} else {
+    header("location:enquire.php");
+}
+
+
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 

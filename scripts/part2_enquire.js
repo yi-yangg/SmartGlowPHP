@@ -161,6 +161,9 @@ function minusQty(input, errorSpan) {
 // Function that adds the product quantity
 function addQty(input, errorSpan) {
     if (checkQty(input, errorSpan)) {
+        if(isNaN(parseInt(input.value))) {
+            input.value = 0;
+        }
         input.value = parseInt(input.value) + 1;
         return true;
     }
@@ -169,6 +172,10 @@ function addQty(input, errorSpan) {
 
 // Function to check if quantity is valid
 function checkQty(input, errorSpan) {
+    if (!javascriptDebug) {
+        return true;
+    }
+
     // Check if quantity is not a number (error)
     if (isNaN(input.value)) {
         showErrorMessage(errorSpan, "Quantity must be a number.", input);
@@ -193,7 +200,11 @@ function calculateProductPrice(productNo, btn, input) {
     // Minus off the previous price
     minusPrevPrice(totalSpan);
 
-    const quantity = parseInt(input.value);
+    var qtyStr = input.value;
+    if (isNaN(parseInt(qtyStr))) {
+        qtyStr = 0;
+    }
+    const quantity = parseInt(qtyStr);
     totalSpan.textContent = (price * quantity).toFixed(2);
     // Add to final price
     minusFinalPrice(price * -quantity);
@@ -235,6 +246,7 @@ function getContactMethod() {
 }
 
 function storeValues() {
+
     // Store customer personal information
     localStorage.firstName = document.getElementById("first-name").value;
     localStorage.lastName = document.getElementById("last-name").value;
@@ -291,6 +303,7 @@ function storeValues() {
     // Additional comments
     localStorage.comment = document.getElementById("comment").value;
 
+    
     // Add time when payment is pressed
     const paymentTime = new Date().getTime();
     localStorage.paymentStartTime = paymentTime;
@@ -381,7 +394,9 @@ function init() {
         billState.onchange = () => checkPostAndState(billPostContainer, billState);
         billPostContainer.getElementsByTagName("input")[0].oninput = () => checkPostAndState(billPostContainer, billState);
 
+        
         purchaseForm.onsubmit = checkInput;
+
     }
         
     changeBillingVisibility(useShippingCheckBox, billPostContainer, true);

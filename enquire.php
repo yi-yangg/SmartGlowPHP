@@ -78,7 +78,7 @@
         <p>Thank you for choosing us! Please fill out the form below to complete your purchase.</p>
 
         <!-- Form -->
-        <form action="payment.php" id="purchase-form" novalidate="novalidate">
+        <form action="payment.php" id="purchase-form" method="post" novalidate="novalidate">
             <!-- Field set for personal information -->
             <fieldset>
                 <legend class="block-legend">Personal Information</legend>
@@ -88,24 +88,25 @@
 
                     <!-- Div to combine label and input so that it acts as a block element -->
                     <div class="form-split">
-                        <label for="first-name">First Name</label>
+                        <label for="first-name">First Name<span class="required-field"> *</span></label>
                         <input type="text" id="first-name" name="first-name" required maxlength="25"
                             pattern="[a-zA-Z ]+" placeholder="John">
+                        <span class="error-msg" hidden></span>
                     </div>
 
                     <div class="form-split">
-                        <label for="last-name">Last Name</label>
+                        <label for="last-name">Last Name<span class="required-field"> *</span></label>
                         <input type="text" id="last-name" name="last-name" required maxlength="25" pattern="[a-zA-Z ]+"
                             placeholder="Doe">
                     </div>
                 </div>
 
                 <!-- Email address input -->
-                <label for="email">Email Address</label>
+                <label for="email">Email Address<span class="required-field"> *</span></label>
                 <input type="email" id="email" name="email" required placeholder="example@domain.com">
 
                 <!-- Phone number input -->
-                <label for="phone-no">Phone Number</label>
+                <label for="phone-no">Phone Number<span class="required-field"> *</span></label>
                 <input type="text" id="phone-no" name="phone-no" maxlength="10" pattern="\d{10}"
                     placeholder="i.e. 0123456789" required>
 
@@ -113,7 +114,7 @@
                 <fieldset id="contact-mtd">
                     <!-- Make radio buttons and legend to the same row -->
 
-                    <legend class="inline-legend">Contact Method</legend>
+                    <legend class="inline-legend">Contact Method<span class="required-field"> *</span></legend>
 
                     <div class="inline-beside-legend">
                         <div class="combine-rad">
@@ -136,12 +137,12 @@
                     <legend class="block-legend">Shipping Address</legend>
 
                     <!-- Street address input -->
-                    <label for="ship-street-add">Street Address</label>
+                    <label for="ship-street-add">Street Address<span class="required-field"> *</span></label>
                     <input type="text" id="ship-street-add" name="ship-street-add" required maxlength="40"
                         pattern="[a-zA-Z0-9 ]+">
 
                     <!-- Street town input -->
-                    <label for="ship-street-suburb">Suburb/Town</label>
+                    <label for="ship-street-suburb">Suburb/Town<span class="required-field"> *</span></label>
                     <input type="text" id="ship-street-suburb" name="ship-street-suburb" required maxlength="20"
                         pattern="[a-zA-Z0-9 ]+">
 
@@ -150,7 +151,7 @@
                     <!-- Combine state and postcode input into the same row -->
                     <div class="combine-row">
                         <div class="form-split">
-                            <label for="ship-street-state">State</label>
+                            <label for="ship-street-state">State<span class="required-field"> *</span></label>
                             <select id="ship-street-state" name="ship-street-state" required>
                                 <option value="" selected>--- Please Select ---</option>
                                 <option value="VIC">VIC</option>
@@ -164,7 +165,7 @@
                             </select>
                         </div>
                         <div class="form-split" id="ship-post-container">
-                            <label for="ship-street-post">Postcode</label>
+                            <label for="ship-street-post">Postcode<span class="required-field"> *</span></label>
                             <input type="text" id="ship-street-post" class="has-error-span" name="ship-street-post"
                                 required pattern="\d{4}" placeholder="i.e. 3000" maxlength="4">
                             <span class="error-msg" hidden></span>
@@ -176,7 +177,7 @@
                     <legend class="block-legend">Billing Address</legend>
                     <!-- Check box to use shipping address for billing address -->
                     <div class="combine-rad">
-                        <input type="checkbox" id="use-ship-check">
+                        <input type="checkbox" id="use-ship-check" name="use-ship-check" value="true">
                         <label for="use-ship-check">Use shipping address</label>
                     </div>
 
@@ -185,7 +186,7 @@
                     <div id="bill-address-container">
                         <!-- Street address input -->
                         <div id="bill-street-container">
-                            <label for="bill-street-add">Street Address</label>
+                            <label for="bill-street-add">Street Address<span class="required-field"> *</span></label>
                             <input type="text" id="bill-street-add" name="bill-street-add" class="has-error-span"
                                 maxlength="40" pattern="[a-zA-Z0-9 ]+">
                             <span class="error-msg" hidden></span>
@@ -194,7 +195,7 @@
 
                         <!-- Street town input -->
                         <div id="bill-suburb-container">
-                            <label for="bill-street-suburb">Suburb/Town</label>
+                            <label for="bill-street-suburb">Suburb/Town<span class="required-field"> *</span></label>
                             <input type="text" id="bill-street-suburb" name="bill-street-suburb" class="has-error-span"
                                 maxlength="20" pattern="[a-zA-Z0-9 ]+">
                             <span class="error-msg" hidden></span>
@@ -204,7 +205,7 @@
                         <!-- Combine state and postcode input into the same row -->
                         <div class="combine-row" id="bill-state-container">
                             <div class="form-split">
-                                <label for="bill-street-state">State</label>
+                                <label for="bill-street-state">State<span class="required-field"> *</span></label>
                                 <select id="bill-street-state" name="bill-street-state" class="has-error-span">
                                     <option value="" selected>--- Please Select ---</option>
                                     <option value="VIC">VIC</option>
@@ -219,7 +220,7 @@
                                 <span class="error-msg" hidden></span>
                             </div>
                             <div class="form-split" id="bill-post-container">
-                                <label for="bill-street-post">Postcode</label>
+                                <label for="bill-street-post">Postcode<span class="required-field"> *</span></label>
                                 <input type="text" id="bill-street-post" name="bill-street-post" class="has-error-span"
                                     pattern="\d{4}" placeholder="i.e. 3000" maxlength="4">
                                 <span class="error-msg" hidden></span>
@@ -235,7 +236,7 @@
 
             <!-- Field set for product information -->
             <fieldset>
-                <legend class="block-legend">Product Selection</legend>
+                <legend class="block-legend">Product Selection<span class="required-field"> *</span></legend>
                 <!-- List of products -->
                 <div id="product-list">
 

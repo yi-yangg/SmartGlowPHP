@@ -1,7 +1,7 @@
 <!-- Timer banner -->
 <div id="timer-banner" hidden>
   <span id="timer" class="timer-text"></span>
-  <a id="pay-btn" href="payment.html">
+  <a id="pay-btn" href="payment.php">
     <p>Pay Now</p>
     <!-- SVG for arrow -->
     <svg

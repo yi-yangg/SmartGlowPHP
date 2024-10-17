@@ -380,8 +380,11 @@ input[type="text"],
 
 .error-msg {
     display: block;
-    font-size: 0.8em;
+}
+
+.required-field, .error-msg {
     color: red;
+    font-size: 0.8em;
 }
 
 .enquire-form textarea {

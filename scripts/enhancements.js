@@ -287,12 +287,15 @@ function checkProductSelection() {
             return false;
         }
 
-        const qtyError = productFooter.querySelector(".error-msg");
-        // If quantity error span is shown (error exists) return false
-        if (!qtyError.hidden) {
-            return false;
+        if (javascriptDebug) {
+            const qtyError = productFooter.querySelector(".error-msg");
+            // If quantity error span is shown (error exists) return false
+            if (!qtyError.hidden) {
+                return false;
+            }
+    
         }
-
+       
     }
 
     return true;
@@ -378,7 +381,7 @@ function timerFinished() {
 // Function that clears local storage and brings user to home page
 function cancelPayment() {
     localStorage.clear();
-    window.location = "index.html";
+    window.location = "index.php";
 }
 
 
