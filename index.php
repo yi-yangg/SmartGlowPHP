@@ -1,3 +1,15 @@
+<?php
+/**
+ * Home page for SmartGlow website
+ * 
+ * @author Chong Yi Yang
+ * @version 1.0
+ * @file index.php
+ */
+
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -29,7 +41,7 @@
         <div class="hero-content">
             <h1>Welcome to SmartGlow</h1>
             <p>Experience the Future of Lightning</p>
-            <a id=shopbtn href="product.html">Shop Now</a>
+            <a id=shopbtn href="product.php">Shop Now</a>
         </div>
     </section>
     <!-- Features section to display features of SmartGlow -->
@@ -70,16 +82,16 @@
             <img src="images/product_map.jpg" alt="Product Map" usemap="#image-map">
 
             <map name="image-map">
-                <area alt="Smart Light Bulb" title="Smart Light Bulb" href="product.html#smart-light-bulb"
+                <area alt="Smart Light Bulb" title="Smart Light Bulb" href="product.php#smart-light-bulb"
                     coords="8,185,17,215,30,219,31,438,35,437,36,220,68,222,82,222,89,197,70,187,53,184,53,173,46,172,45,183,27,181"
                     shape="poly">
-                <area alt="Smart LED" title="Smart LED" href="product.html#smart-led-strips"
+                <area alt="Smart LED" title="Smart LED" href="product.php#smart-led-strips"
                     coords="154,149,140,153,130,163,123,180,123,204,134,226,145,240,161,248,182,249,196,241,207,223,208,206,206,183,193,165,178,152,166,149"
                     shape="poly">
-                <area alt="Flexible Light Strip" title="Flexible Light Strip" href="product.html#smart-flexi-light"
+                <area alt="Flexible Light Strip" title="Flexible Light Strip" href="product.php#smart-flexi-light"
                     coords="349,42,313,51,297,61,288,76,287,91,294,104,311,112,329,116,319,131,330,139,354,145,379,144,410,139,430,133,442,125,439,112,420,103,435,96,437,82,435,68,419,53,391,44"
                     shape="poly">
-                <area alt="Smart LED" title="Smart LED" href="product.html#smart-led-strips"
+                <area alt="Smart LED" title="Smart LED" href="product.php#smart-led-strips"
                     coords="93,0,337,154,479,129,479,144,334,169,0,1" shape="poly">
             </map>
         </div>
@@ -90,7 +102,7 @@
         <h2>Have Any Questions?</h2>
         <p>We're here to help! Feel free to reach out for help if you have any questions.</p>
         <!-- Enquire now button with image -->
-        <a id="enqbtn" href="enquire.html">
+        <a id="enqbtn" href="enquire.php">
             <p>Enquire Now</p>
             <!-- SVG for arrow -->
             <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" height="24" viewBox="0 0 48 48">

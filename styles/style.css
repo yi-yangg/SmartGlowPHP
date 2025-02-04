@@ -47,6 +47,13 @@ header .shown-menu {
     display: flex;
 }
 
+.shown-menu nav {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+}
+
 .navbar {
     /* Remove bullet points */
     list-style: none;
@@ -367,6 +374,7 @@ input[type="text"],
     width: 100%;
     padding: 8px;
     margin: 8px 0px;
+    margin-bottom: 0px;
     /* Change to rounded border */
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -374,16 +382,18 @@ input[type="text"],
     transition: border-color 0.4s;
 }
 
-.has-error-span {
-    margin-bottom: 0px !important;
+.has-error {
+    border-color: red !important;
 }
+
 
 .error-msg {
     display: block;
+    margin-bottom: 8px;
 }
 
 .required-field, .error-msg {
-    color: red;
+    color: rgb(192, 0, 0);
     font-size: 0.8em;
 }
 
@@ -473,9 +483,9 @@ input[type="text"]:focus,
 
 .delete-prod {
     cursor: pointer;
-    border: 1px solid rgb(255, 45, 45);
+    border: 1px solid rgb(214, 0, 0);
     border-radius: 6px;
-    background-color: rgb(255, 45, 45);
+    background-color: rgb(214, 0, 0);
     fill: white;
     padding: 2px;
     transition: fill 0.2s;
@@ -486,7 +496,17 @@ svg {
 }
 
 .delete-prod:hover {
-    fill: black
+    fill: black;
+}
+
+.delete-prod:hover span {
+    color: black;
+}
+
+.delete-prod span {
+    color: white;
+    padding-left: 8px;   
+    transition: color 0.2s;
 }
 
 .prod-option-header {
@@ -989,19 +1009,20 @@ svg {
 }
 
 .form-act input[type="submit"] {
-    background-color: #007bff;
+    background-color: #006cdf;
     color: white;
-    border: 1px solid #007bff;
+    border: 1px solid #006cdf;
 }
 
 #cancelBtn {
+    text-decoration: none;
     background-color: #ff3f1e;
     color: white;
     border: 1px solid #ff3f1e;
 }
 
 .form-act input[type="submit"]:hover {
-    color: #007bff;
+    color: #006cdf;
     background-color: white;
 }
 
@@ -1053,7 +1074,366 @@ svg {
     fill: white;
 }
 
-@media (max-width: 1000px) {
+/* Receipt page css */
+#receipt-body {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.receipt-container {
+    max-width: 1200px;
+    margin: 50px auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.receipt-header {
+    text-align: center;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.receipt-header h1 {
+    font-size: 2em;
+    color: #00796b;
+}
+
+.receipt-container h2 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+.order-details,
+.customer-info,
+.payment-details {
+    margin-bottom: 20px;
+}
+
+.details-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.details-row div {
+    width: 48%;
+}
+
+.details-row label {
+    font-weight: bold;
+}
+
+.payment-method {
+    color: #333;
+    background-color: #f5f5f5;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.order-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.order-table th {
+    text-align: left;
+    background-color: #00796b;
+    border: 0;
+    padding: 12px;
+    color: white;
+    font-weight: 600;
+}
+
+.order-table td {
+    padding: 12px;
+    vertical-align: center;
+}
+
+.order-table tr:not(:last-child) {
+    border-bottom: 1px solid #e9ecef;
+}
+
+.option {
+    color: #616161;
+    font-size: 0.9em;
+}
+
+.total {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: right;
+    padding-right: 10px;
+}
+
+.receipt-footer {
+    text-align: center;
+    font-size: 14px;
+    color: #777;
+}
+
+/* Manager page css */
+#manager-body {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.report-container {
+    max-width: 1200px;
+    margin: 50px auto;
+    margin-bottom: 150px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.report-container h1 {
+    font-size: 2em;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    color: #007bff;
+    
+}
+.search-form {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.search-form .filter {
+    display: flex;
+    align-items: center;
+    flex: 1; /* Takes up remaining space depending on other filter items*/
+    margin-right: 15px;
+}
+
+.filter input[type="text"],
+.filter select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    margin-left: 5px;
+    margin-top: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter input[type="submit"] {
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: 1px solid #006cdf;
+    background-color: #006cdf;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s, color 0.3s;
+}
+.filter input[type="submit"]:hover {
+    background-color: white;
+    color: #006cdf;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+    
+}
+
+.report-table th, .report-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border: 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.report-table th {
+    background-color: #f1f3f5;
+    color: #343a40;
+}
+
+.report-table .expand-btn {
+    background-color: transparent;
+    color: #006cdf;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.report-table .expand-icon {
+    margin-right: 5px;
+}
+
+.order-details {
+    display: none;
+    background-color: white;
+    border-left: 1px solid #006cdf;
+}
+
+.order-details h2 {
+    font-size: 1.4em;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.order-details p {
+    font-size: 1em;
+    margin: 5px 0;
+}
+
+.form-container {
+    display: flex;
+    justify-content: space-between; /* Aligns forms to the left and right */
+    align-items: center; /* Vertically center the forms */
+    margin-top: 20px; /* Add some spacing above */
+}
+
+.delete-order-form {
+    /* Make button align to the end */
+    display: flex;
+    justify-content: flex-end;
+}
+
+.status-update-form, .delete-order-form {
+    margin-top: 15px;
+}
+
+.status-update-form select {
+    padding: 8px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: auto;
+}
+
+.order-details .btn {
+    padding: 8px 12px;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.order-details .update-btn {
+    background-color: #1d6d2f;
+}
+
+.order-details .update-btn:hover {
+    background-color: #218838;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
+body {
+    height: 100vh;
+}
+
+/* Login page css */
+.login-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 100px 0;
+}
+
+.login-container {
+    background-color: #ffffff;
+    padding: 40px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.login-container h1 {
+    color: #111;
+    margin-bottom: 20px;
+    font-size: 2em;
+    text-align: center;
+}
+
+.login-container h2 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    text-align: center;
+}
+
+.login-container form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.login-container label {
+    font-weight: bold;
+    margin-bottom: 8px;
+    margin-top: 10px;
+    color: #555;
+}
+
+.login-container input[type="text"], .login-container input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    
+    margin-top: 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: border-color 0.3s;
+}
+
+.login-container input[type="text"]:focus, .login-container input[type="password"]:focus {
+    border-color: #006cdf;
+    outline: none;
+}
+
+.login-container input[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background-color: #006cdf;
+    color: white;
+    font-size: 16px;
+    margin-top: 10px;
+    border: 1px solid #006cdf;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3;
+}
+
+.login-container input[type="submit"]:hover {
+    background-color: white;
+    color: #006cdf;
+}
+
+.login-container p {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #444444;
+}
+
+.login-container a {
+    color: #006cdf;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.login-container a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 1400px) {
     /* Show the hidden nav bar when width changes */
     .hidden-menu {
         display: block;
@@ -1242,6 +1622,12 @@ svg {
     #customer-info-container {
         margin: 1.5em 0;
         border-radius: 0;
+    }
 
+    .details-row {
+        flex-direction: column;
+    }
+    .details-row div {
+        width: 100%;
     }
 }

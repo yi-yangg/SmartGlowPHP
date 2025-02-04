@@ -1,27 +1,59 @@
 <?php
+/**
+ * PHP file that processes the payment and updates the order status in the database
+ * Once payment details is filled in, it will redirect to process_order.php, where 
+ * the inputs will be validated and stored in the database. The order status will be
+ * initially set to "Pending" and will be updated to "Paid" if the payment is successful.
+ * 
+ * @author Chong Yi Yang
+ * @version 1.0
+ * @file payment.php
+ */
+
 session_start();
 
 require("utilities.php");
+
+// Store all user input in enquire.php into session
 function storeInputInSession()
 {
-
-}
-
-
-
-function validateString($str, $regex, $length, $allowedChars)
-{
-    if (empty($str)) {
-        return "Field is required.";
-    } else if (strlen($str) > $length) {
-        return "Input must be a maximum of $length characters.";
-    } else if (!preg_match($regex, $str)) {
-        return "Input must only contain: " . implode(", ", $allowedChars) . ".";
-    } else {
-        return "";
+    $_SESSION["firstName"] = sanitise_input($_POST["first-name"]);
+    $_SESSION["lastName"] = sanitise_input($_POST["last-name"]);
+    $_SESSION["email"] = sanitise_input($_POST["email"]);
+    $_SESSION["phoneNo"] = sanitise_input($_POST["phone-no"]);
+    if (isset($_POST["contact-method"])) {
+        $_SESSION["contactMethod"] = sanitise_input($_POST["contact-method"]);
     }
+    $_SESSION["shipStreet"] = sanitise_input($_POST["ship-street-add"]);
+    $_SESSION["shipSuburb"] = sanitise_input($_POST["ship-street-suburb"]);
+    $_SESSION["shipState"] = sanitise_input($_POST["ship-street-state"]);
+    $_SESSION["shipPost"] = sanitise_input($_POST["ship-street-post"]);
+    $_SESSION["useShipCheck"] = isset($_POST["use-ship-check"]) ? true : false;
+
+    if (!isset($_POST["use-ship-check"])) {
+        $_SESSION["billStreet"] = sanitise_input($_POST["bill-street-add"]);
+        $_SESSION["billSuburb"] = sanitise_input($_POST["bill-street-suburb"]);
+        $_SESSION["billState"] = sanitise_input($_POST["bill-street-state"]);
+        $_SESSION["billPost"] = sanitise_input($_POST["bill-street-post"]);
+    }
+
+    // Store product number
+    $_SESSION["productNoArr"] = getAllProductNo();
+
+    foreach ($_SESSION["productNoArr"] as $productNo) {
+        $_SESSION["product-$productNo"] = sanitise_input($_POST["product-$productNo"]);
+        if (!isset($_POST["option-$productNo"]))
+            continue;
+        $_SESSION["option-$productNo"] = sanitise_input($_POST["option-$productNo"]);
+        if (!isset($_POST["quantity-$productNo"]))
+            continue;
+        $_SESSION["quantity-$productNo"] = sanitise_input($_POST["quantity-$productNo"]);
+    }
+
+    $_SESSION["comment"] = sanitise_input($_POST["comment"]);
 }
 
+// Validate email address format
 function validateEmail($email)
 {
     if (empty($email)) {
@@ -33,70 +65,372 @@ function validateEmail($email)
     }
 }
 
-function validateDigits($str, $length, $field)
-{
-    if (empty($str)) {
-        return "$field cannot be empty.";
-    } else if (!preg_match("/^\d{" . $length . "}$/", $str)) {
-        return "$field must be exactly $length digits.";
-    } else {
-        return "";
-    }
-}
-
-function validateRadio($fieldName)
-{
-    if (!isset($_POST[$fieldName])) {
-        return "At least 1 option must be selected";
-    }
-    return "";
-
-}
-
+// Validate postcode and state combination
 function validatePostAndState($post, $state)
 {
+    $postErrMsg = validateDigits($post, 4, "Postcode");
+    $stateErrMsg = "";
+    // Mapping of states to valid postcodes
+    $statePostArr = [
+        "VIC" => [3, 8],
+        "NSW" => [1, 2],
+        "QLD" => [4, 9],
+        "NT" => [0],
+        "WA" => [6],
+        "SA" => [5],
+        "TAS" => [7],
+        "ACT" => [0],
+    ];
+    // Check if state is empty or invalid
+    if (empty($state)) {
+        $stateErrMsg = "State is required.";
+    } else if (!array_key_exists($state, $statePostArr)) {
+        $stateErrMsg = "Invalid state.";
+    }
 
+    // If there are errors in state or postcode, return the errors
+    if ($postErrMsg || $stateErrMsg) {
+        return [$stateErrMsg, $postErrMsg];
+    }
+
+    $firstDigit = $post[0];
+    $validPostcodes = $statePostArr[$state];
+    // Check if first digit of postcode is valid for the state
+    if (!in_array($firstDigit, $validPostcodes)) {
+        $postErrMsg = "Invalid postcode for $state.";
+    }
+
+    return [$stateErrMsg, $postErrMsg];
 }
 
+// Get all product numbers from POST
+function getAllProductNo()
+{
+    $productNoArr = [];
+    foreach ($_POST as $key => $value) {
+        // Check if key is a product number then extract the number and add to array
+        if (preg_match("/^product-(\d+)$/", $key, $matches)) {
+            $productNoArr[] = $matches[1];
+        }
+    }
+    return $productNoArr;
+}
+
+// Validate product, option and quantity
+function validateProduct($productNo)
+{
+    $productErrMsg = "";
+    $optionErrMsg = "";
+    $quantityErrMsg = "";
+
+    // If option is not set, then product is not selected
+    if (!isset($_POST["option-$productNo"])) {
+        $productErrMsg = "Please select a product.";
+        return [$productErrMsg, $optionErrMsg, $quantityErrMsg];
+    }
+
+    $product = sanitise_input($_POST["product-$productNo"]);
+    // Check product is a valid product from MySQL
+    $productDAO = new ProductDAO();
+    $allProducts = $productDAO->getProducts();
+
+    $foundProduct = array_filter($allProducts, function ($p) use ($product) {
+        return strtolower($p) === strtolower($product);
+    });
+
+
+    if (empty($foundProduct)) {
+        $productErrMsg = "Invalid product.";
+        return [$productErrMsg, $optionErrMsg, $quantityErrMsg];
+    }
+
+
+    // If quantity is not set, then option is not selected
+    if (!isset($_POST["quantity-$productNo"])) {
+        $optionErrMsg = "Please select an option.";
+        return [$productErrMsg, $optionErrMsg, $quantityErrMsg];
+    }
+
+    $option = sanitise_input($_POST["option-$productNo"]);
+    $quantity = sanitise_input($_POST["quantity-$productNo"]);
+
+    // If product is select, then validate if option is selected
+    if (empty($productErrMsg) && empty($option)) {
+        $optionErrMsg = "Please select an option.";
+    }
+
+    // Validate if product option exists in MySql
+    $optionDAO = new ProductOptionDAO();
+    $allOptions = $optionDAO->getProductOptions($product);
+
+    // Filter options based on the selected product option
+    $foundOptions = array_filter($allOptions, function ($o) use ($option) {
+        return strtolower($o["option_name"]) === strtolower($option);
+    });
+
+    if (empty($foundOptions)) {
+        $optionErrMsg = "Invalid option.";
+        return [$productErrMsg, $optionErrMsg, $quantityErrMsg];
+    }
+
+    // Validate quantity
+    $quantityErrMsg = validateDigits($quantity, null, "Quantity");
+
+    return [$productErrMsg, $optionErrMsg, $quantityErrMsg];
+}
+
+// Validate all user input from enquire.php
 function validateInput()
 {
-    $firstName = sanitise_input($_POST["first-name"]);
-    $lastName = sanitise_input($_POST["last-name"]);
+    $firstNameRaw = $_POST["first-name"];
+    $lastNameRaw = $_POST["last-name"];
     // Validate first and last name
-    $firstNameErrMsg = validateString($firstName, "/^[a-zA-Z ]+$/", 25, ["Alphabets", "Spaces"]);
-    $lastNameErrMsg = validateString($lastName, "/^[a-zA-Z ]+$/", 25, ["Alphabets", "Spaces"]);
+    $firstNameErrMsg = validateString($firstNameRaw, "/^[a-zA-Z ]+$/", 25, ["Alphabets", "Spaces"]);
+    $lastNameErrMsg = validateString($lastNameRaw, "/^[a-zA-Z ]+$/", 25, ["Alphabets", "Spaces"]);
 
     // Validate email address
-    $email = sanitise_input($_POST["email"]);
-    $emailErrMsg = validateEmail($email);
+    $emailRaw = $_POST["email"];
+    $emailErrMsg = validateEmail($emailRaw);
 
     // Validate phone number
-    $phoneNo = sanitise_input($_POST["phone-no"]);
-    $phoneErrMsg = validateDigits($phoneNo, 10, "Phone number");
+    $phoneNoRaw = $_POST["phone-no"];
+    $phoneErrMsg = validateDigits($phoneNoRaw, 10, "Phone number");
 
     // Validate if contact method is selected
     $contactMethErrMsg = validateRadio("contact-method");
 
     // Validate shipping address
-    $shipStreet = sanitise_input($_POST["ship-street-add"]);
-    $shipStreetErrMsg = validateString($shipStreet, "/^[a-zA-Z0-9 ]+$/", 40, ["Alphabets", "Numbers", "Spaces"]);
+    $shipStreetRaw = $_POST["ship-street-add"];
+    $shipStreetErrMsg = validateString($shipStreetRaw, "/^[a-zA-Z0-9 ]+$/", 40, ["Alphabets", "Numbers", "Spaces"]);
 
-    $shipSuburb = sanitise_input($_POST["ship-street-suburb"]);
-    $shipSuburbErrMsg = validateString($shipSuburb, "/^[a-zA-Z0-9 ]+$/", 40, ["Alphabets", "Numbers", "Spaces"]);
+    $shipSuburbRaw = $_POST["ship-street-suburb"];
+    $shipSuburbErrMsg = validateString($shipSuburbRaw, "/^[a-zA-Z0-9 ]+$/", 40, ["Alphabets", "Numbers", "Spaces"]);
 
     // Check state and postcode combination
-
+    $shipStateRaw = $_POST["ship-street-state"];
+    $shipPostRaw = $_POST["ship-street-post"];
+    list($shipStateErrMsg, $shipPostErrMsg) = validatePostAndState($shipPostRaw, $shipStateRaw);
 
     // Validate billing address
+    $billStreetErrMsg = "";
+    $billSuburbErrMsg = "";
+    $billStateErrMsg = "";
+    $billPostErrMsg = "";
+
+    if (!isset($_POST["use-ship-check"])) {
+        // Validate billing street address
+        $billStreetRaw = $_POST["bill-street-add"];
+        $billStreetErrMsg = validateString($billStreetRaw, "/^[a-zA-Z0-9 ]+$/", 40, ["Alphabets", "Numbers", "Spaces"]);
+
+        // Validate billing suburb
+        $billSuburbRaw = $_POST["bill-street-suburb"];
+        $billSuburbErrMsg = validateString($billSuburbRaw, "/^[a-zA-Z0-9 ]+$/", 40, ["Alphabets", "Numbers", "Spaces"]);
+
+        // Check billing address state and postcode combination
+        $billStateRaw = $_POST["bill-street-state"];
+        $billPostRaw = $_POST["bill-street-post"];
+        list($billStateErrMsg, $billPostErrMsg) = validatePostAndState($billPostRaw, $billStateRaw);
+    }
+
+    // Validate products
+    $productErrMsgArr = [];
+    $optionErrMsgArr = [];
+    $quantityErrMsgArr = [];
+
+    $productNoArr = getAllProductNo();
+
+    // Merge duplicate product and option
+    $mergedProducts = [];
+    foreach ($productNoArr as $productNo) {
+        $product = $_POST["product-$productNo"];
+        if (!isset($_POST["option-$productNo"]))
+            continue;
+        $option = $_POST["option-$productNo"];
+        if (!isset($_POST["quantity-$productNo"]))
+            continue;
+        $quantity = $_POST["quantity-$productNo"];
+
+        $key = $product . '-' . $option;
+        if (isset($mergedProducts[$key])) {
+            $mergedProducts[$key] += $quantity;
+        } else {
+            $mergedProducts[$key] = $quantity;
+        }
+    }
+
+    // Update $_POST with merged quantities
+    foreach ($productNoArr as $productNo) {
+        $product = $_POST["product-$productNo"];
+        if (!isset($_POST["option-$productNo"]) || !isset($_POST["quantity-$productNo"]))
+            continue;
+        $option = $_POST["option-$productNo"];
+        $key = $product . '-' . $option;
+
+        if (isset($mergedProducts[$key])) {
+            $_POST["quantity-$productNo"] = $mergedProducts[$key];
+            unset($mergedProducts[$key]); // Ensure only one productNo is updated
+        } else {
+            unset($_POST["product-$productNo"]);
+            unset($_POST["option-$productNo"]);
+            unset($_POST["quantity-$productNo"]);
+            // Pop product number from array
+            $productNoArr = array_filter($productNoArr, function ($p) use ($productNo) {
+                return $p !== $productNo;
+            });
+        }
+    }
+
+    // For each of the product numbers, validate the product, option and quantity
+    foreach ($productNoArr as $productNo) {
+        // Validate chosen product
+        list($productErrMsg, $optionErrMsg, $quantityErrMsg) = validateProduct($productNo);
+        $productErrMsgArr[] = $productErrMsg;
+        $optionErrMsgArr[] = $optionErrMsg;
+        $quantityErrMsgArr[] = $quantityErrMsg;
+    }
+
+    // Combine all user basic information into an array
+    $errorArr = [
+        "firstName" => $firstNameErrMsg,
+        "lastName" => $lastNameErrMsg,
+        "email" => $emailErrMsg,
+        "phoneNo" => $phoneErrMsg,
+        "contactMethod" => $contactMethErrMsg,
+        "shipStreet" => $shipStreetErrMsg,
+        "shipSuburb" => $shipSuburbErrMsg,
+        "shipState" => $shipStateErrMsg,
+        "shipPost" => $shipPostErrMsg,
+        "billStreet" => $billStreetErrMsg,
+        "billSuburb" => $billSuburbErrMsg,
+        "billState" => $billStateErrMsg,
+        "billPost" => $billPostErrMsg,
+    ];
+
+    // Filter out non empty errors from the error array
+    $nonEmptyErrors = array_filter($errorArr, function ($err) {
+        return !empty($err);
+    });
+
+
+    // Check product errors
+    $productErrors = array_filter(array_merge($productErrMsgArr, $optionErrMsgArr, $quantityErrMsgArr), function ($err) {
+        return !empty($err);
+    });
+
+
+    storeInputInSession();
+    // Store all errors in session
+    $_SESSION["errors"] = $errorArr;
+    $_SESSION["productErrors"] = $productErrMsgArr;
+    $_SESSION["optionErrors"] = $optionErrMsgArr;
+    $_SESSION["quantityErrors"] = $quantityErrMsgArr;
+    if (!empty($nonEmptyErrors) || !empty($productErrors)) {
+        header("location:enquire.php#purchase-form");
+        exit();
+    }
+
 }
 
+// Billing session info may not be replaced when the user resubmits the form
+function clearBillingSessionInfo()
+{
+    if (isset($_SESSION["billStreet"])) {
+        unset($_SESSION["billStreet"]);
+        unset($_SESSION["billSuburb"]);
+        unset($_SESSION["billState"]);
+        unset($_SESSION["billPost"]);
+    }
+}
+
+// Calculate total price of all products
+function calculateTotalPrice()
+{
+    $totalPrice = 0;
+    // For each product number, calculate the price and quantity
+    foreach ($_SESSION["productNoArr"] as $productNo) {
+        $product = $_SESSION["product-$productNo"];
+        $option = $_SESSION["option-$productNo"];
+        $quantity = $_SESSION["quantity-$productNo"];
+
+        $price = getPrice($product, $option);
+        // Add to total price
+        $totalPrice += $price * $quantity;
+    }
+    $_SESSION["totalPrice"] = $totalPrice;
+}
+
+// If user has submitted the form from enquire.php, process the order
 if (isset($_POST["first-name"])) {
+    // Clear billing session info
+    clearBillingSessionInfo();
+
+    // Validate user input on enquire.php
     validateInput();
+
+    // Calculate total price
+    calculateTotalPrice();
+
+    // Add/update order to orders table depending on if orderNo is set
+    addToOrders(isset($_SESSION["orderNo"]));
+
+
 } else {
-    header("location:enquire.php");
+    // If redirect back from process_order.php, don't redirect back to enquire.php
+    if (isset($_SESSION["didPaymentFail"])) {
+        unset($_SESSION["didPaymentFail"]);
+    } else {
+        header("location:enquire.php ");
+    }
 }
 
+function addToOrders($isUpdate)
+{
+    // Create order and order items DAO objects
+    $orderDAO = new OrderDAO();
+    $orderItemDAO = new OrderItemDAO();
 
+    // Get user information from session
+    $name = sanitise_input($_SESSION["firstName"] . " " . $_SESSION["lastName"]);
+    $email = sanitise_input($_SESSION["email"]);
+    $phoneNo = sanitise_input($_SESSION["phoneNo"]);
+    $contactMethod = sanitise_input($_SESSION["contactMethod"]);
+    $address = sanitise_input($_SESSION["shipStreet"] . ", " . $_SESSION["shipSuburb"] . ", " . $_SESSION["shipState"] . ", " . $_SESSION["shipPost"]);
+    $billAddress = $_SESSION["useShipCheck"] ? "" : sanitise_input($_SESSION["billStreet"] . ", " . $_SESSION["billSuburb"] . ", " . $_SESSION["billState"] . ", " . $_SESSION["billPost"]);
+    $comment = sanitise_input($_SESSION["comment"]);
+    $totalPrice = sanitise_input($_SESSION["totalPrice"]);
+
+
+    if ($isUpdate) {
+        $orderDAO->updateOrder($_SESSION["orderNo"], $name, $email, $phoneNo, $contactMethod, $address, $billAddress, $comment, $totalPrice);
+        $orderID = $_SESSION["orderNo"];
+    } else {
+        // Insert order into orders table
+        $orderID = $orderDAO->insertOrder($name, $email, $phoneNo, $contactMethod, $address, $billAddress, $comment, $totalPrice);
+    }
+
+    $orderItemDAO->deleteOrderItem($orderID);
+    // Get all product numbers from session
+    $productNoArr = $_SESSION["productNoArr"];
+    foreach ($productNoArr as $productNo) {
+        $product = $_SESSION["product-$productNo"];
+        $option = $_SESSION["option-$productNo"];
+        $quantity = $_SESSION["quantity-$productNo"];
+        // Insert order item into order_items table
+        $orderItemDAO->insertOrderItem($orderID, $product, $option, $quantity, number_format(getPrice($product, $option), 2));
+    }
+
+    // Store order number in session
+    $_SESSION["orderNo"] = $orderID;
+}
+
+function getPrice($product, $option)
+{
+    $optionDAO = new ProductOptionDAO();
+
+    $price = $optionDAO->getOptionPrice($product, $option);
+
+    return $price ? $price : 0;
+}
 
 ?>
 
@@ -145,13 +479,19 @@ if (isset($_POST["first-name"])) {
             <!-- Subtotal container -->
             <div class="product-data">
                 <h4>Subtotal</h4>
-                <p>A$ <span id="subtotal">0.00</span></p>
+                <p>A$ <span id="subtotal">
+                        <?php
+
+                        echo number_format($_SESSION["totalPrice"], 2);
+
+                        ?>
+                    </span></p>
             </div>
             <!-- Horizontal line -->
             <hr>
 
             <!-- Payment form -->
-            <form id="payment-form" method="post" action="https://mercury.swin.edu.au/it000000/formtest.php">
+            <form id="payment-form" method="post" action="process_order.php" novalidate="novalidate">
                 <fieldset id="card-information">
                     <legend class="block-legend">Card Information</legend>
 
@@ -159,7 +499,9 @@ if (isset($_POST["first-name"])) {
                     <div class="form-group" id="card-type-container">
                         <label>Card Type</label>
                         <div id="card-type-options">
-                            <input type="radio" id="visa" name="card-type" value="visa" title="Visa">
+                            <input type="radio" id="visa" name="card-type" value="visa" title="Visa" <?php
+                            echo (isset($_SESSION["cardType"]) && $_SESSION["cardType"] == "visa") ? "checked" : "";
+                            ?>>
                             <label for="visa" title="Visa">
                                 <!-- Visa Icon SVG -->
                                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
@@ -175,7 +517,9 @@ if (isset($_POST["first-name"])) {
                                 </svg>
                             </label>
 
-                            <input type="radio" id="mastercard" name="card-type" value="mastercard" title="MasterCard">
+                            <input type="radio" id="mastercard" name="card-type" value="mastercard" title="MasterCard" <?php
+                            echo (isset($_SESSION["cardType"]) && $_SESSION["cardType"] == "mastercard") ? "checked" : "";
+                            ?>>
                             <label for="mastercard" title="MasterCard">
                                 <!-- MasterCard Icon SVG -->
                                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
@@ -189,7 +533,9 @@ if (isset($_POST["first-name"])) {
                                 </svg>
                             </label>
 
-                            <input type="radio" id="amex" name="card-type" value="amex" title="American Express">
+                            <input type="radio" id="amex" name="card-type" value="amex" title="American Express" <?php
+                            echo (isset($_SESSION["cardType"]) && $_SESSION["cardType"] == "amex") ? "checked" : "";
+                            ?>>
                             <label for="amex" title="American Express">
                                 <!-- Amex Icon SVG -->
                                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
@@ -202,58 +548,72 @@ if (isset($_POST["first-name"])) {
                                 </svg>
                             </label>
                         </div>
-                        <span class="error-msg"></span>
+                        <span class="error-msg">
+                            <?php
+                            displayErrorIfExist("paymentErrors", "cardType");
+                            ?>
+                        </span>
                     </div>
 
                     <!-- Card Name Group -->
                     <div class="form-group" id="card-name-container">
                         <label for="card-name">Name on Card</label>
-                        <input type="text" class="has-error-span" id="card-name" name="card-name"
-                            placeholder="Full Name">
-                        <span class="error-msg"></span>
+                        <input type="text" id="card-name" name="card-name" placeholder="Full Name" <?php
+                        checkFieldErrors("paymentErrors", "cardName");
+                        ?>>
+                        <span class="error-msg">
+                            <?php
+                            displayErrorIfExist("paymentErrors", "cardName");
+                            ?>
+                        </span>
                     </div>
 
                     <!-- Card Number Group -->
                     <div class="form-group" id="card-number-container">
                         <label for="card-number">Card Number</label>
-                        <input type="text" id="card-number" class="has-error-span" name="card-number"
-                            placeholder="XXXX XXXX XXXX XXXX">
-                        <span class="error-msg"></span>
+                        <input type="text" id="card-number" name="card-number" placeholder="XXXX XXXX XXXX XXXX" <?php
+                        checkFieldErrors("paymentErrors", "cardNumber");
+                        ?>>
+                        <span class="error-msg">
+                            <?php
+                            displayErrorIfExist("paymentErrors", "cardNumber");
+                            ?>
+                        </span>
                     </div>
 
                     <!-- Expiry Date Group -->
                     <div class="form-group" id="expiry-date-container">
                         <label for="expiry-date">Expiry Date (MM-YY)</label>
-                        <input type="text" id="expiry-date" class="has-error-span" name="expiry-date"
-                            placeholder="MM-YY">
-                        <span class="error-msg"></span>
+                        <input type="text" id="expiry-date" name="expiry-date" placeholder="MM-YY" <?php
+                        checkFieldErrors("paymentErrors", "expiryDate");
+                        ?>>
+                        <span class="error-msg">
+                            <?php
+                            displayErrorIfExist("paymentErrors", "expiryDate");
+                            ?>
+                        </span>
                     </div>
 
                     <!-- CVV Group -->
                     <div class="form-group" id="cvv-container">
                         <label for="cvv">CVV</label>
-                        <input type="text" id="cvv" class="has-error-span" name="cvv" placeholder="XXX">
-                        <span class="error-msg"></span>
+                        <input type="text" id="cvv" name="cvv" placeholder="XXX" <?php
+                        checkFieldErrors("paymentErrors", "cvv");
+                        ?>>
+                        <span class="error-msg">
+                            <?php
+                            displayErrorIfExist("paymentErrors", "cvv");
+                            ?>
+                        </span>
                     </div>
 
                 </fieldset>
                 <!-- Group for form actions -->
+
                 <div class="form-act">
                     <input type="submit" value="Check-Out">
-                    <button type="button" id="cancelBtn">Cancel</button>
+                    <a href="cancel_order.php" id="cancelBtn">Cancel</a>
                 </div>
-
-                <!-- Hidden inputs -->
-                <input type="hidden" id="first-name" name="first-name">
-                <input type="hidden" id="last-name" name="last-name">
-                <input type="hidden" id="email" name="email">
-                <input type="hidden" id="phone-no" name="phone-no">
-                <input type="hidden" name="contact-method" id="contact-method">
-                <input type="hidden" name="ship-street-add" id="ship-street-add">
-                <input type="hidden" name="ship-street-suburb" id="ship-street-suburb">
-                <input type="hidden" name="ship-street-state" id="ship-street-state">
-                <input type="hidden" name="ship-street-post" id="ship-street-post">
-                <input type="hidden" name="use-ship-check" id="use-ship-check">
 
 
             </form>
@@ -265,29 +625,57 @@ if (isset($_POST["first-name"])) {
             <h2>Your Details</h2>
             <div class="info-group">
                 <h4>Personal Details</h4>
-                <p><strong>Name:</strong> <span id="full-name"></span></p>
-                <p><strong>Email:</strong> <span id="email-span"></span></p>
-                <p><strong>Phone Number:</strong> <span id="phone"></span></p>
-                <p><strong>Contact Method:</strong> <span id="contact-method-span"></span></p>
+                <p><strong>Name:</strong> <?php echo $_SESSION["firstName"] . " " . $_SESSION["lastName"] ?></p>
+                <p><strong>Email:</strong> <?php echo $_SESSION["email"] ?></p>
+                <p><strong>Phone Number:</strong> <?php echo $_SESSION["phoneNo"] ?></p>
+                <p><strong>Contact Method:</strong> <?php echo ucfirst($_SESSION["contactMethod"]) ?></p>
             </div>
-            <div class="info-group" id="delivery-address">
-                <h4>Shipping Address</h4>
-                <span id="ship-add"></span>
-            </div>
-            <div class="info-group" id="billing-address">
-                <h4>Billing Address</h4>
-                <span id="bill-add"></span>
-            </div>
+
+            <?php
+            echo '<div class="info-group" id="delivery-address"><h4>Shipping' . ($_SESSION["useShipCheck"] ? ' & Billing ' : ' ') . 'Address</h4>';
+            echo $_SESSION["shipStreet"] . ", " . $_SESSION["shipSuburb"] . ", " . $_SESSION["shipState"] . ", " . $_SESSION["shipPost"] . '</div>';
+
+            ?>
+            <?php
+            if (!$_SESSION["useShipCheck"]) {
+                echo '<div class="info-group" id="billing-address"><h4>Billing Address</h4>';
+                echo $_SESSION["billStreet"] . ", " . $_SESSION["billSuburb"] . ", " . $_SESSION["billState"] . ", " . $_SESSION["billPost"] . '</div>';
+            }
+            ?>
             <div class="info-group">
                 <h4>Products</h4>
                 <!-- Dynamically adding products into cart list -->
                 <div id="cart-list">
+                    <?php
+                    foreach ($_SESSION["productNoArr"] as $productNo) {
+                        $product = $_SESSION["product-$productNo"];
+                        $option = $_SESSION["option-$productNo"];
+                        $quantity = $_SESSION["quantity-$productNo"];
 
+                        $price = getPrice($product, $option);
+
+                        echo '
+                        <div class="product-item">
+                            <div class="product-details">
+                                <h5>' . ucwords($product) . '</h5>
+                                <div class="product-data">
+                                    <span>' . strtoupper($option) . '</span>
+                                    <span>Quantity: ' . $quantity . '</span>
+                                </div>
+                                <div class="product-price">
+                                    <span>A$ ' . number_format($price, 2) . '</span>
+                                </div>
+                            </div>
+                        </div>
+                        ';
+
+                    }
+                    ?>
                 </div>
             </div>
             <div class="info-group">
                 <h4>Comments</h4>
-                <span id="comments-span"></span>
+                <p><?php echo $_SESSION["comment"] ?></p>
             </div>
 
         </div>

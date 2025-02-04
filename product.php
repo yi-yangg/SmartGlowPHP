@@ -1,3 +1,15 @@
+<?php
+/**
+ * Product page that displays the range of smart lighting products available at SmartGlow
+ * 
+ * @author Chong Yi Yang
+ * @version 1.0
+ * @file product.php
+ */
+
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 

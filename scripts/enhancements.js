@@ -19,13 +19,42 @@
 
 const javascriptDebug = false;
 
+async function fetchProducts() {
+    try {
+        const response = await fetch('getProducts.php');
+        const products = await response.json();
+        return products;
+    } catch(error) {
+        return null;
+    }
+}
+
+async function fetchProductOptions(productName) {
+    try {
+        const response = await fetch('getProductOptions.php?product_name=' + encodeURIComponent(productName));
+        const options = await response.json();
+        return options;
+    } catch(error) {
+        return null;
+    }
+}
+
 // Function that dynamically creates a product when user clicks add product
-function createProductItem(productNo) {
+async function createProductItem(productNo) {
     const productList = document.getElementById("product-list");
     // Create product container in product list
     const productContainer = document.createElement("div");
     productContainer.className = "product-item";
     productContainer.setAttribute("id", "prod-item-" + productNo);
+    const products = await fetchProducts();
+    // If products is not null then create product item
+    
+    let productsHTML = '<option value="" selected>--- Please Select ---</option>';
+    if (products) {
+        products.forEach(product => {
+            productsHTML += `<option value="${product.toLowerCase()}">${product}</option>`;
+        });
+    }
 
     // Add elements into the product container
     productContainer.innerHTML = `
@@ -39,10 +68,7 @@ function createProductItem(productNo) {
         </div>
         
         <select id="product-${productNo}" name="product-${productNo}" class="has-error-span" required>
-            <option value="" selected>--- Please Select ---</option>
-            <option value="light-bulbs">Smart Light Bulbs</option>
-            <option value="leds">Smart LEDs</option>
-            <option value="light-strips">Smart Light Strips</option>
+            ${productsHTML}
         </select>
 
         <div id="product-options-${productNo}"></div>  
@@ -102,43 +128,27 @@ function updateProductOptions(productNo) {
         // If product footer exists remove
         productFooter.remove();
     }
-    // Set new options
-    if (product === "light-bulbs") {
-        // For light bulbs different sizes
-        productOptionsContainer.innerHTML = `
+
+
+    fetchProductOptions(product).then(options => {
+        if (options) {
+            let optionsHTML = `
             <label class="prod-option-header">Size:</label>
             <input type="hidden" id="option-${productNo}" name="option-${productNo}">
-            <button type="button" class="option-btn" data-value="a19" data-price="17.99">A19<br>A$17.99</button>
-            <button type="button" class="option-btn" data-value="br30" data-price="22.99">BR30<br>A$22.99</button>
-            <button type="button" class="option-btn" data-value="gu10" data-price="19.99">GU10<br>A$19.99</button>
-            <span class="error-msg" hidden></span>    
-        `
-    }
-    else if(product === "leds") {
-        // Different lengths for LED
-        productOptionsContainer.innerHTML = `
-            <label class="prod-option-header">Length:</label>
-            <input type="hidden" id="option-${productNo}" name="option-${productNo}">
-            <button type="button" class="option-btn" data-value="2m" data-price="19.99">2m<br>A$19.99</button>
-            <button type="button" class="option-btn" data-value="5m" data-price="27.99">5m<br>A$27.99</button>
-            <button type="button" class="option-btn" data-value="10m" data-price="42.99">10m<br>A$42.99</button>
-            <span class="error-msg" hidden></span> 
-        `
-    }
-    else if(product === "light-strips") {
-        // Different length options for light strips
-        productOptionsContainer.innerHTML = `
-            <label class="prod-option-header">Length:</label>
-            <input type="hidden" id="option-${productNo}" name="option-${productNo}">
-            <button type="button" class="option-btn" data-value="1m" data-price="12.99">1m<br>A$12.99</button>
-            <button type="button" class="option-btn" data-value="2m" data-price="21.99">2m<br>A$21.99</button>
-            <button type="button" class="option-btn" data-value="5m" data-price="33.99">5m<br>A$33.99</button>
-            <span class="error-msg" hidden></span> 
-        `
-    }
-    else {
-        return;
-    }
+            `
+            // If options exist then create buttons
+            options.forEach(option => {
+                optionsHTML += `<button type="button" class="option-btn" data-value="${option.option_name}" data-price="${option.price}">${option.option_name}<br>A$${option.price}</button> `;
+            });
+
+            productOptionsContainer.innerHTML = optionsHTML;
+
+            // Set event listeners for all option buttons
+            setOptionButtonEvents(productNo, productOptionsContainer);
+        }
+    }).catch(error => {console.error(error)});
+
+    if (productOptionsContainer.innerHTML === "") return;
 
     setOptionButtonEvents(productNo, productOptionsContainer);
 }
@@ -153,8 +163,11 @@ function setOptionButtonEvents(productNo, optionsContainer) {
             // Once clicked show product footer and hide error message
             showProductFooter(productNo, currButton, allButtons);
 
-            const errorSpan = optionsContainer.querySelector(".error-msg");
-            hideErrorMessage(errorSpan, null);
+            if (javascriptDebug) {
+                const errorSpan = optionsContainer.querySelector(".error-msg");
+                hideErrorMessage(errorSpan, null);
+            }
+           
         }
     }
 }

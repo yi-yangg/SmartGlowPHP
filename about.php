@@ -1,3 +1,15 @@
+<?php
+/**
+ * About page for Chong Yi Yang
+ * 
+ * @author Chong Yi Yang
+ * @version 1.0
+ * @file about.php
+ */
+
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 

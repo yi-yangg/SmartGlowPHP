@@ -1,3 +1,15 @@
+<?php
+/**
+ * Enhancement page for SmartGlow website, detailing the advanced HTML, CSS and responsive design elements used.
+ * 
+ * @author Chong Yi Yang
+ * @version 1.0
+ * @file enhancements.php
+ */
+
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -38,7 +50,7 @@
         <!-- Sections for each enhancement -->
         <section>
             <h3 class="faq-question">Image Map for Interactive Product Exploration &#40;HTML&#41;</h3>
-            <p>The <a class="inline-link" href="index.html#explore-section">product exploration section</a> on the
+            <p>The <a class="inline-link" href="index.php#explore-section">product exploration section</a> on the
                 product page uses an image map to create an interactive experience. This allows users to hover over and
                 click different areas of an image to learn more about the specific products. The image map was created
                 using the &lt;map&gt; and &lt;area&gt; elements.</p>
@@ -50,9 +62,9 @@
             <h4>a&#41; ::before and ::after Pseudo-elements:</h4>
             <p>
                 The <strong>::before</strong> pseudo-element was used in several hero sections of the code:
-                <a class="inline-link" href="index.html#home-hero-sec">Home Hero</a>, <a class="inline-link"
-                    href="product.html#product-hero-sec">Product Hero</a>, and <a class="inline-link"
-                    href="about.html#about-hero-sec">About Hero</a>
+                <a class="inline-link" href="index.php#home-hero-sec">Home Hero</a>, <a class="inline-link"
+                    href="product.php#product-hero-sec">Product Hero</a>, and <a class="inline-link"
+                    href="about.php#about-hero-sec">About Hero</a>
                 It is used to darken the hero background image while maintaining the clarity of headings and paragraphs.
                 Information from: <a class="inline-link"
                     href="https://stackoverflow.com/questions/49644492/darkening-background-image-with-before-css3-pseudo-selector">Stack
@@ -61,8 +73,8 @@
 
             <p>
                 The <strong>::after</strong> pseudo-element is also used in several sections: <a class="inline-link"
-                    href="about.html#details-sec">My Details Section</a> and <a class="inline-link"
-                    href="product.html#smart-bulb-sec">Product Section</a> to clear floats, ensuring that floating
+                    href="about.php#details-sec">My Details Section</a> and <a class="inline-link"
+                    href="product.php#smart-bulb-sec">Product Section</a> to clear floats, ensuring that floating
                 elements do not exceed or overlap with their sections.
                 Information from: <a class="inline-link"
                     href="https://stackoverflow.com/questions/10699343/using-after-to-clear-floating-elements">Stack
@@ -73,13 +85,13 @@
             <p>
                 The <strong>:hover</strong> pseudo-class was used to add animations to HTML elements, enhancing
                 interactivity and user experience. This pseudo-class is applied to multiple elements: <a
-                    class="inline-link" href="index.html#feature-sec">Feature Cards</a>, <a class="inline-link"
-                    href="index.html">Home page buttons</a>, and Navigation Link on the header.
+                    class="inline-link" href="index.php#feature-sec">Feature Cards</a>, <a class="inline-link"
+                    href="index.php">Home page buttons</a>, and Navigation Link on the header.
             </p>
 
             <p>
                 The <strong>::focus</strong> pseudo-class was also used to add animations to forms: <a
-                    class="inline-link" href="enquire.html#enquire-sec">Fields in Enquiry Forms</a>.
+                    class="inline-link" href="enquire.php#enquire-sec">Fields in Enquiry Forms</a>.
             </p>
 
             <h4 id="flex-box-usage">c&#41; Usage of flex boxes</h4>
@@ -94,13 +106,13 @@
                     and align menu items.
                 </li>
                 <li>
-                    <strong>Feature Sections:</strong> The <a class="inline-link" href="index.html#feature-sec">Feature
+                    <strong>Feature Sections:</strong> The <a class="inline-link" href="index.php#feature-sec">Feature
                         Cards</a> on the homepage are arranged using flexbox to ensure that the cards adjust gracefully
                     by using flex-wrap when the viewport size changes.
                 </li>
                 <li>
                     <strong>Layout of the Explore Section:</strong> In the <a class="inline-link"
-                        href="index.html#explore-section">Explore Section</a>, flexbox is utilized to position the
+                        href="index.php#explore-section">Explore Section</a>, flexbox is utilized to position the
                     content and image side by side.
                 </li>
             </ul>
@@ -118,7 +130,7 @@
                 <li>The <code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code> tag
                     was added to the head of each page to ensure proper scaling on mobile devices.</li>
                 <li>Media queries were used to adjust the layout at different screen sizes: max-width of 950px for the
-                    <a class="inline-link" href="product.html">product range page</a> to change the side bar to top bar
+                    <a class="inline-link" href="product.php">product range page</a> to change the side bar to top bar
                     and max-width of 768px for tablet size screens for all pages, i.e. Navigation bar for header
                     changes, font-size changes, margin and padding changes, etc.
                 </li>

@@ -1,3 +1,15 @@
+<?php
+/**
+ * Enhancments 2 page for SmartGlow website detailing the Javascript enhancements made to the website
+ * 
+ * @author Chong Yi Yang
+ * @version 1.0
+ * @file enhancements2.php
+ */
+
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -39,7 +51,7 @@
             <p>
                 This feature allows users to dynamically add or delete products they have selected. Users trigger this
                 functionality by clicking the 'Add Product' button in the <a class="inline-link"
-                    href="enquire.html#product-list">product section</a> of the enquiry page.
+                    href="enquire.php#product-list">product section</a> of the enquiry page.
                 Upon clicking, a new product entry is created and inserted into the DOM dynamically, allowing users to
                 view and manage their selected products.
             </p>
@@ -67,7 +79,7 @@
 
             <p>
                 For more details on this enhancement, visit the <a class="inline-link"
-                    href="enquire.html#product-list">Enquire</a> page.
+                    href="enquire.php#product-list">Enquire</a> page.
             </p>
             <p>
                 References: <a
@@ -83,8 +95,8 @@
             <p>
                 The payment timer feature counts down from a specified duration (10 mins), alerting users when time is
                 running out. This enhancement is automatically triggered when the user clicks the
-                "Pay Now" button on the <a class="inline-link" href="enquire.html">enquiry page</a> and navigates to the
-                <a class="inline-link" href="payment.html">payment page</a>. Once the timer
+                "Pay Now" button on the <a class="inline-link" href="enquire.php">enquiry page</a> and navigates to the
+                <a class="inline-link" href="payment.php">payment page</a>. Once the timer
                 starts, it remains visible at the top of the page, allowing users to keep track of their remaining time,
                 no matter which page they are viewing.
             </p>
@@ -100,7 +112,7 @@
                 <li>Timer visibility is controlled using Javascript by adding/removing the hidden attribute</li>
             </ul>
             <p>For more information on this enhancement, check out the <a class="inline-link"
-                    href="payment.html">Payment Page</a>.</p>
+                    href="payment.php">Payment Page</a>.</p>
             <p>
                 References:
                 <a href="https://developer.mozilla.org/en-US/docs/Web/API/setInterval" class="inline-link">setInterval

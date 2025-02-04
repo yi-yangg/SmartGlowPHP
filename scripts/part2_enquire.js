@@ -1,7 +1,7 @@
 /**
  * Author: Chong Yi Yang
- * Target: enquire.html
- * Purpose: Control and validate the form elements in enquire.html
+ * Target: enquire.php
+ * Purpose: Control and validate the form elements in enquire.php
  * Created: 13/9/2024
  * Last updated: 19/9/2024
  * Credits: 
@@ -225,12 +225,12 @@ function minusFinalPrice(price) {
 
 function createNewProduct() {
     // If previous product has no error then can create product
-    if (checkProductSelection())
-        createProductItem(noOfProduct++);
+    // if (checkProductSelection())
+    createProductItem(noOfProduct++);
 
-    else {
-        showToast("Please complete or fix the error on your previous product before adding.");
-    }
+    // else {
+    //     showToast("Please complete or fix the error on your previous product before adding.");
+    // }
 }
 
 
@@ -408,14 +408,81 @@ function init() {
     // On click event to display and hide billing address section
     useShippingCheckBox.onclick = () => changeBillingVisibility(useShippingCheckBox, billPostContainer, false);
 
+    noOfProduct = getMaxProductNumber() + 1;
+
     // Set default 1 product on product list
-    createProductItem(noOfProduct++);
+    // createProductItem(noOfProduct++);
+
 
     // On click event for new product button
     newProductBtn.onclick = () => createNewProduct();
 
     // On click event for close toast
     toastClose.onclick = closeToast;
+}
+
+function getMaxProductNumber() {
+    // Select all elements with IDs starting with 'product-'
+    const productElements = document.querySelectorAll('[id^="prod-item-"]');
+    
+    // Extract the numbers from the IDs
+    const productNumbers = Array.from(productElements).map(element => {
+        const id = element.id;
+        const number = parseInt(id.split('-')[2]);
+        return number;
+    });
+
+    productNumbers.forEach(num => {
+        // Reattach event listeners for product drop down and delete button
+        const deleteButton = document.getElementById("del-prod-" + num);
+        deleteButton.onclick = () => removeProduct(num);
+
+        const productSelect = document.getElementById("product-" + num);
+        productSelect.onchange = () => updateProductOptions(num);
+
+        // If product option exists then add event listener
+        const productOptionsContainer = document.getElementById("product-options-" + num);
+        if (productOptionsContainer) {
+            setOptionButtonEvents(num, productOptionsContainer);
+        }
+
+        // If product footer exists then add quantity event listeners
+        const productContainer = document.getElementById("prod-item-" + num);
+        // Find footer in product container
+        const productFooter = productContainer.querySelector(".product-footer");
+
+        // If footer exists then add event listeners
+        if (productFooter) {
+            // Get active button in productOptions
+            const activeBtn = productOptionsContainer.querySelector(".active");
+            const errorSpan = productFooter.querySelector(".error-msg");
+            const minusBtn = document.getElementById("minus-qty-" + num);
+            const addBtn = document.getElementById("add-qty-" + num);
+            const quantityInput = document.getElementById("quantity-" + num);
+            // Set event listeners for buttons and input
+            minusBtn.onclick = () => {
+                // If successfully minus then update price
+                if (minusQty(quantityInput, errorSpan)) {
+                    calculateProductPrice(num, activeBtn, quantityInput);
+                }
+            }
+            addBtn.onclick = () => {
+                if (addQty(quantityInput, errorSpan)) {
+                    calculateProductPrice(num, activeBtn, quantityInput);
+                }
+                
+            }
+            quantityInput.oninput = () => {
+                if(checkQty(quantityInput, errorSpan)) {
+                    calculateProductPrice(num, activeBtn, quantityInput);
+                }
+            }
+        }
+    })
+
+    // Find the maximum number
+    const maxProductNumber = Math.max(...productNumbers, 0);
+    return maxProductNumber;
 }
 
 window.onload = init;

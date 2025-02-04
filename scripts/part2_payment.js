@@ -1,6 +1,6 @@
 /**
  * Author: Chong Yi Yang
- * Target: payment.html
+ * Target: payment.php
  * Purpose: Allow user to pay for selected products in enquire page
  * Created: 13/9/2024
  * Last updated: 19/9/2024
@@ -428,5 +428,6 @@ function init() {
     const cancelButton = document.getElementById("cancelBtn");
     cancelButton.onclick = cancelPayment;
 }
-
-window.onload = init;
+if (javascriptDebug) {
+    window.onload = init;
+}
